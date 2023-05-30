@@ -1,5 +1,61 @@
 <?php  
 
+
+function pageBanner($args = array()) {
+    // php logic will be here
+    if(empty($args)){
+        if(!get_the_title()){
+            $args['title'] = 'Please add page title';
+        }else{
+            $args['title'] = get_the_title();
+        }
+
+        if(!get_field('page_banner_subtitle')){
+            $args['subtitle'] = 'Please add banner image and subtitle from page settings';
+        }else{
+            $args['subtitle']= get_field('page_banner_subtitle');
+        }
+
+        if(!get_field('page_banner_background_image')){
+            $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
+        }else{
+            $args['photo'] = get_field('page_banner_background_image')['sizes']['pagebanner'];
+        }
+    
+        
+    }else{
+        if(!$args['title']){
+            $args['title'] = get_the_title();
+        }
+        if(!$args['subtitle']){
+            $args['subtitle']= get_field('page_banner_subtitle');
+        }
+        if(!isset($args['photo'])){
+            if(get_field('page_banner_background_image')){
+                $args['photo'] = get_field('page_banner_background_image')['sizes']['pagebanner'];
+            }else{
+                $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
+            }
+        }
+    }
+    
+
+    ?>
+
+    <div class="page-banner">
+      <div class="page-banner__bg-image" style="background-image: url(<?php echo $args['photo']; ?>)"></div>
+      <div class="page-banner__content container container--narrow">
+        <h1 class="page-banner__title"><?php echo $args['title']; ?></h1>
+            <div class="page-banner__intro">
+            <p><?php echo $args['subtitle']; ?></p>
+            </div>
+      </div>
+    </div>
+
+
+<?php }
+
+
 // Adding styles and scripts
 function university_files(){
 
@@ -26,9 +82,15 @@ function university_features(){
 
     
     add_theme_support( 'title-tag' );
+    add_theme_support('post-thumbnails');
+    add_image_size('professorLandscape', 400, 260, true); // Making image size with cropping image TRUE. Crop from center
+    add_image_size('professorPotrait', 480, 650, true);
+    add_image_size('pagebanner', 1500, 350, true);
+
 }
 
 add_action('after_setup_theme', 'university_features');
+
 
 // Adjusting Events post archive SPECIALLY, so, it won't show past events. Because, archive page nornmally query through WP functions.
 
@@ -56,8 +118,6 @@ function university_adjust_queries($query){
         $query->set('order', 'ASC');
         $query->set('posts_per_page', -1);
     }
-
-
 
     
 }
