@@ -8,7 +8,7 @@ while(have_posts(  )) {
     // function written in functions.php
     pageBanner();
     
-    ?>
+?>
 
 
 
