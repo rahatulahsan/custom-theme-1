@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "wp-content/themes/fictional-univesity"
+		},
+		{
+			"path": "wp-content/mu-plugins"
+		}
+	],
+	"settings": {}
+}
