@@ -42,6 +42,8 @@ class Search {
         setTimeout(() => this.searchField.focus() , 301); // setting a time to add cursor in search field
 
         this.isOverlayOpen = true;
+
+        return false; // Disable going to normal search page with JS enabled. it will open overlay
     }
 
     closeOverlay(){
