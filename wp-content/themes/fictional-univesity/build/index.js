@@ -14,9 +14,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/HeroSlider */ "./src/modules/HeroSlider.js");
 /* harmony import */ var _modules_GoogleMap__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/GoogleMap */ "./src/modules/GoogleMap.js");
 /* harmony import */ var _modules_Search__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/Search */ "./src/modules/Search.js");
+/* harmony import */ var _modules_MyNotes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/MyNotes */ "./src/modules/MyNotes.js");
 
 
 // Our modules / classes
+
 
 
 
@@ -27,6 +29,7 @@ const mobileMenu = new _modules_MobileMenu__WEBPACK_IMPORTED_MODULE_1__["default
 const heroSlider = new _modules_HeroSlider__WEBPACK_IMPORTED_MODULE_2__["default"]();
 const googleMap = new _modules_GoogleMap__WEBPACK_IMPORTED_MODULE_3__["default"]();
 const siteSearch = new _modules_Search__WEBPACK_IMPORTED_MODULE_4__["default"]();
+const myNotes = new _modules_MyNotes__WEBPACK_IMPORTED_MODULE_5__["default"]();
 
 /***/ }),
 
@@ -180,6 +183,166 @@ class MobileMenu {
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MobileMenu);
+
+/***/ }),
+
+/***/ "./src/modules/MyNotes.js":
+/*!********************************!*\
+  !*** ./src/modules/MyNotes.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "jquery");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+class MyNotes {
+  constructor() {
+    this.events();
+  }
+  events() {
+    // Selecting the parent element. And adding the inside element in the 2nd parameter. 
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-notes").on("click", ".delete-note", this.deleteNote);
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-notes").on("click", ".edit-note", this.editNote.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("#my-notes").on("click", ".update-note", this.updateNote.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(".submit-note").on("click", this.createNote.bind(this));
+  }
+
+  //All Methods here
+
+  // Function to delete the data
+  deleteNote(e) {
+    var thisNote = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e.target).parents("li"); // targetting the li starting from button
+
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
+      },
+      url: universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.data('id'),
+      type: 'DELETE',
+      success: response => {
+        thisNote.slideUp(); // deleting the note from UI
+        console.log("Congrats!");
+        console.log(response);
+        if (response.userNoteCount < 5) {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()(".note-limit-message").removeClass("active");
+        }
+      },
+      error: response => {
+        console.log("Sorry");
+        console.log(response);
+      }
+    });
+  }
+
+  // Function for Updating the data
+  updateNote(e) {
+    var thisNote = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e.target).parents("li"); // targetting the li starting from button
+
+    // Getting the data from the field for updating
+    var ourUpdatedPost = {
+      'title': thisNote.find(".note-title-field").val(),
+      'content': thisNote.find(".note-body-field").val()
+    };
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
+      },
+      url: universityData.root_url + '/wp-json/wp/v2/note/' + thisNote.data('id'),
+      type: 'POST',
+      data: ourUpdatedPost,
+      success: response => {
+        this.makeNoteReadOnly(thisNote); // After update, it will make the field Read Only
+        console.log("Congrats!");
+        console.log(response);
+      },
+      error: response => {
+        a;
+        console.log("Sorry");
+        console.log(response);
+      }
+    });
+  }
+
+  // New Note Creation Funtion
+  createNote(e) {
+    // Getting the data from the field for updating
+    var ourNewPost = {
+      'title': jquery__WEBPACK_IMPORTED_MODULE_0___default()(".new-note-title").val(),
+      'content': jquery__WEBPACK_IMPORTED_MODULE_0___default()(".new-note-body").val(),
+      'status': 'publish'
+    };
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
+      },
+      url: universityData.root_url + '/wp-json/wp/v2/note/',
+      type: 'POST',
+      data: ourNewPost,
+      success: response => {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(".new-note-title, .new-note-body").val(''); // Making the fields empty where user adding input
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()(`
+                    <li data-id ="${response.id}">
+                        <input readonly class="note-title-field" value ="${response.title.raw}">
+                        <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
+                        <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
+                        <textarea readonly class="note-body-field">${response.content.raw}</textarea>
+                        <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
+                    </li>
+                `).prependTo('#my-notes').hide().slideDown();
+        console.log("Congrats!");
+        console.log(response);
+      },
+      error: response => {
+        if (response.responseText == "\r\n\r\n\r\n\r\n\r\nYou have reached your note limit") {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()(".note-limit-message").addClass("active");
+        }
+        console.log("Sorry");
+        console.log(response);
+      }
+    });
+  }
+  editNote(e) {
+    var thisNote = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e.target).parents("li"); // capturing the parent element and that is a LIST
+
+    // Condition checking. Based on that function will call. Either for Edit or For read Mode
+    if (thisNote.data("state") == "editable") {
+      //make read only
+      this.makeNoteReadOnly(thisNote);
+    } else {
+      // make editable
+      this.makeNoteEditable(thisNote);
+    }
+  }
+
+  // Function that is running when a user clicking in edit
+  makeNoteEditable(thisNote) {
+    // After clicking in edit button making text field edit mode
+    thisNote.find(".note-title-field, .note-body-field").removeAttr("readonly").addClass("note-active-field");
+    // Also Making the Save button Visible
+    thisNote.find(".update-note").addClass("update-note--visible");
+    // Making the edit button a Cancel button 
+    thisNote.find(".edit-note").html('<i class="fa fa-times" aria-hidden="true"></i> Cancel');
+
+    // Making the state editable. So, next time when user click, at the top function editNote the IF condition will run
+    thisNote.data("state", "editable");
+  }
+
+  // Function that is running when a user clicking on Cancel Button (Opposite of Edit action will run)
+  makeNoteReadOnly(thisNote) {
+    // After clicking in cancel button making text field readonly mode again
+    thisNote.find(".note-title-field, .note-body-field").attr("readonly", "readonly").removeClass("note-active-field");
+    // disapperaing the Save button
+    thisNote.find(".update-note").removeClass("update-note--visible");
+    // Making the edit button a Cancel button 
+    thisNote.find(".edit-note").html('<i class="fa fa-pencil" aria-hidden="true"></i> Edit');
+    thisNote.data("state", "cancel");
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MyNotes);
 
 /***/ }),
 
