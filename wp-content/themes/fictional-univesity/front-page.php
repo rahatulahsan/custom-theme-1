@@ -91,18 +91,6 @@
 
 
 
-<div id="slider" class="slider">
-		<div class="slider-content">
-			<div class="slider-content-wrapper">
-				<div class="slider-content__item image-1" style="background-image: url(<?php echo get_theme_file_uri( 'images/bus.jpg' ); ?>)"></div>
-				<div class="slider-content__item image-2" style="background-image: url(<?php echo get_theme_file_uri( 'images/apples.jpg' ); ?>)"></div>
-				<div class="slider-content__item image-3" style="background-image: url(<?php echo get_theme_file_uri( 'images/bread.jpg' ); ?>)"></div>
-
-			</div>
-		</div>
-	</div>
-
-
 <?php get_footer(); ?>
 
 

@@ -1,6 +1,7 @@
 <?php  
 
 require get_theme_file_path('/inc/search-route.php');
+require get_theme_file_path('/inc/like-route.php');;
 
 // customizing the REST API. Adding a new property and returning
 function university_custom_rest(){
@@ -76,13 +77,21 @@ function pageBanner($args = array()) {
 function university_files(){
 
     wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=AIzaSyDlyHQODJhr0NFhNxCwp-7mDsy5EAIbGu4', NULL, '1.0', true);
+    //wp_enqueue_script('jquery-slim-min', 'https://code.jquery.com/jquery-3.2.1.slim.min.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('popper-min', 'https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('bootstrap-min', 'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js', array('jquery'), '1.0', true);
     wp_enqueue_script('main-university-js', get_theme_file_uri('/build/index.js'), array('jquery'), '1.0', true);
+    
     
     wp_enqueue_style( 'custom-google-font',  'https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i' );
     wp_enqueue_style( 'font-awesome',  'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' );
+    wp_enqueue_style( 'bootstrap-css',  'https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css' );
+    
     
     wp_enqueue_style( 'university_main_styles',  get_theme_file_uri( '/build/style-index.css' ));
     wp_enqueue_style( 'university_main_styles',  get_theme_file_uri( '/build/index.css' ));
+    
+    
 
     // localizing for the API URL flexibility
     wp_localize_script('main-university-js', 'universityData', array(

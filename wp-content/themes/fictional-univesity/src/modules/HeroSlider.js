@@ -27,4 +27,4 @@ class HeroSlider {
   }
 }
 
-export default HeroSlider
+export default HeroSlider;
